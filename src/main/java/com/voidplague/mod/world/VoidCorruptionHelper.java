@@ -23,25 +23,37 @@ public class VoidCorruptionHelper {
     /** Maximum number of blocks that can be transmuted per tick per dimension to prevent lag spikes. */
     public static final int MAX_CORRUPTIONS_PER_TICK_PER_DIM = 8;
 
-    private static final Map<ResourceKey<Level>, Integer> CORRUPTIONS_THIS_TICK = new HashMap<>();
-    private static long lastGameTime = -1L;
+    /**
+     * Independent per-dimension budget tracker so dimensions ticking independently never interfere with each other.
+     */
+    private static class DimensionBudget {
+        long lastGameTime = -1L;
+        int count = 0;
+    }
+
+    private static final Map<ResourceKey<Level>, DimensionBudget> BUDGETS = new HashMap<>();
 
     /**
-     * Checks and consumes one transmutation slot from the shared dimension tick budget.
+     * Checks if this dimension has remaining transmutation budget for the current game tick.
      */
     public static boolean canCorruptThisTick(ServerLevel level) {
         long currentGameTime = level.getGameTime();
-        if (currentGameTime != lastGameTime) {
-            CORRUPTIONS_THIS_TICK.clear();
-            lastGameTime = currentGameTime;
+        DimensionBudget budget = BUDGETS.computeIfAbsent(level.dimension(), k -> new DimensionBudget());
+        if (budget.lastGameTime != currentGameTime) {
+            budget.lastGameTime = currentGameTime;
+            budget.count = 0;
         }
-        int currentCount = CORRUPTIONS_THIS_TICK.getOrDefault(level.dimension(), 0);
-        return currentCount < MAX_CORRUPTIONS_PER_TICK_PER_DIM;
+        return budget.count < MAX_CORRUPTIONS_PER_TICK_PER_DIM;
     }
 
     private static void recordCorruption(ServerLevel level) {
-        int currentCount = CORRUPTIONS_THIS_TICK.getOrDefault(level.dimension(), 0);
-        CORRUPTIONS_THIS_TICK.put(level.dimension(), currentCount + 1);
+        long currentGameTime = level.getGameTime();
+        DimensionBudget budget = BUDGETS.computeIfAbsent(level.dimension(), k -> new DimensionBudget());
+        if (budget.lastGameTime != currentGameTime) {
+            budget.lastGameTime = currentGameTime;
+            budget.count = 0;
+        }
+        budget.count++;
     }
 
     /**
@@ -79,10 +91,17 @@ public class VoidCorruptionHelper {
 
     /**
      * Attempts to corrupt a single target block following real-time biological infection rules and budget constraints.
+     * Verifies that the destination is within 48 blocks of an active rift before performing any change.
      * @return true if the block was corrupted, false otherwise.
      */
     public static boolean corruptBlock(ServerLevel level, BlockPos pos, RandomSource random) {
         if (!level.hasChunkAt(pos)) {
+            return false;
+        }
+
+        // Enforce spatial boundary: the target block MUST be within 48 blocks of an active rift
+        VoidPlagueSavedData savedData = VoidPlagueSavedData.get(level);
+        if (!savedData.isNearActiveRift(level, pos, 48.0)) {
             return false;
         }
 
@@ -132,7 +151,7 @@ public class VoidCorruptionHelper {
                 || state.is(Blocks.ROOTED_DIRT) || state.is(Blocks.FARMLAND)) {
 
             BlockPos abovePos = pos.above();
-            if (level.hasChunkAt(abovePos) && level.isEmptyBlock(abovePos) && random.nextFloat() < 0.55F) {
+            if (level.hasChunkAt(abovePos) && level.isEmptyBlock(abovePos) && savedData.isNearActiveRift(level, abovePos, 48.0) && random.nextFloat() < 0.55F) {
                 BlockState carpet = ModBlocks.VOID_TENDRIL_CARPET.get().defaultBlockState()
                         .setValue(MultifaceBlock.getFaceProperty(Direction.DOWN), true);
                 level.setBlockAndUpdate(abovePos, carpet);

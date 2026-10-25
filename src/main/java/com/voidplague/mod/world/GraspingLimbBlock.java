@@ -4,6 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.voidplague.mod.entity.GraspingLimbBlockEntity;
 import com.voidplague.mod.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -53,10 +54,21 @@ public class GraspingLimbBlock extends BaseEntityBlock {
             if (living instanceof Player player && (player.isCreative() || player.isSpectator())) {
                 return;
             }
-            // Bone tearing sound, 3.0F magic damage and Slowness III for 60 ticks
-            level.playSound(null, pos, SoundEvents.BONE_BLOCK_BREAK, SoundSource.BLOCKS, 1.2F, 0.7F);
-            living.hurt(level.damageSources().magic(), 3.0F);
+
+            // Always apply Slowness III so the victim remains restrained in the grasping limbs
             living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 2));
+
+            // Enforce a 20-tick (1.0 second) damage and sound cooldown per entity via persistent data
+            long gameTime = level.getGameTime();
+            CompoundTag data = living.getPersistentData();
+            long lastHurtTime = data.getLong("void_plague:limb_last_hurt");
+
+            if (lastHurtTime == 0L || gameTime - lastHurtTime >= 20L || gameTime < lastHurtTime) {
+                if (living.hurt(level.damageSources().magic(), 3.0F)) {
+                    level.playSound(null, pos, SoundEvents.BONE_BLOCK_BREAK, SoundSource.BLOCKS, 1.2F, 0.7F);
+                    data.putLong("void_plague:limb_last_hurt", gameTime);
+                }
+            }
         }
         super.entityInside(state, level, pos, entity);
     }

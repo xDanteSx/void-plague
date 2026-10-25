@@ -31,7 +31,9 @@ public class VoidCarapaceBlock extends Block {
                 int dz = random.nextInt(3) - 1;
                 if (dx != 0 || dy != 0 || dz != 0) {
                     BlockPos targetPos = pos.offset(dx, dy, dz);
-                    VoidCorruptionHelper.corruptBlock(level, targetPos, random);
+                    if (savedData.isNearActiveRift(level, targetPos, 48.0)) {
+                        VoidCorruptionHelper.corruptBlock(level, targetPos, random);
+                    }
                 }
             }
         }

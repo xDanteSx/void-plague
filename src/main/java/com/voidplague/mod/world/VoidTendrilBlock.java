@@ -60,9 +60,13 @@ public class VoidTendrilBlock extends Block {
             return;
         }
 
-        // Pick a random adjacent direction (all 6 directions) and delegate to centralized corruption helper
+        // Pick a random adjacent direction (all 6 directions) and check boundary at destination
         Direction dir = Direction.getRandom(random);
         BlockPos targetPos = pos.relative(dir);
+        if (!savedData.isNearActiveRift(level, targetPos, 48.0)) {
+            return;
+        }
+
         VoidCorruptionHelper.corruptBlock(level, targetPos, random);
     }
 }
