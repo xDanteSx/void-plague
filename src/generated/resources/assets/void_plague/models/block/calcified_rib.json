@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "void_plague:block/calcified_rib_top",
+    "side": "void_plague:block/calcified_rib_side"
+  }
+}

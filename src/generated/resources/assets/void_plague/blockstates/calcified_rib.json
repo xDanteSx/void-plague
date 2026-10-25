@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "axis=x": {
+      "model": "void_plague:block/calcified_rib_horizontal",
+      "x": 90,
+      "y": 90
+    },
+    "axis=y": {
+      "model": "void_plague:block/calcified_rib"
+    },
+    "axis=z": {
+      "model": "void_plague:block/calcified_rib_horizontal",
+      "x": 90
+    }
+  }
+}

@@ -1,0 +1,6 @@
+// 1.21.1	2026-10-24T21:10:00.0711	Tags for minecraft:block mod id void_plague
+ecad29fcd1a91b603ed8ec5aa31b2716789dd2eb data/minecraft/tags/block/mineable/axe.json
+c0ace7d36b8664076f58e30bbf23e2f1e913fbf0 data/minecraft/tags/block/mineable/hoe.json
+c6897716025265b330c91d9966194e3573f81817 data/minecraft/tags/block/mineable/pickaxe.json
+33ffcd11cd47ae4e318911b9656783b6d295bab1 data/minecraft/tags/block/mineable/shovel.json
+fcb0bdf07f4df962da23b79c7917153cdcfcd6f9 data/minecraft/tags/block/needs_stone_tool.json

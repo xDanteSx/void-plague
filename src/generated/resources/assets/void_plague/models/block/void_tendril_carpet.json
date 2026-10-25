@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/glow_lichen",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "glow_lichen": "void_plague:block/void_tendril_carpet",
+    "particle": "void_plague:block/void_tendril_carpet"
+  }
+}

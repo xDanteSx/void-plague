@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "void_plague:block/cluster_incubation_sac"
+    }
+  }
+}

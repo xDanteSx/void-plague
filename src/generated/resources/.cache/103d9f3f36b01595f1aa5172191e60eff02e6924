@@ -1,0 +1,6 @@
+// 1.21.1	2026-10-24T21:33:04.1601997	Registries
+28cd6d9f7936fa0273ce05f564b4068deae54269 data/void_plague/neoforge/biome_modifier/add_void_chasm.json
+0c96811842f4780d81fae85a0549db1f0f78ca51 data/void_plague/neoforge/biome_modifier/spawn_voidling.json
+1c4f94eb63ef8cdb37a0fd91124e7c0ed68275a5 data/void_plague/worldgen/biome/void_chasm.json
+9192c806997c873de150ccc476beb3d2df975dc9 data/void_plague/worldgen/configured_feature/void_chasm.json
+95d0091f878b51fb60884db648b645ecb601ce8b data/void_plague/worldgen/placed_feature/void_chasm.json

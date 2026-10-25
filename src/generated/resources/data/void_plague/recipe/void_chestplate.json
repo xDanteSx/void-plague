@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "E": {
+      "item": "void_plague:void_essence"
+    },
+    "M": {
+      "item": "void_plague:void_matter"
+    }
+  },
+  "pattern": [
+    "M M",
+    "MEM",
+    "MMM"
+  ],
+  "result": {
+    "count": 1,
+    "id": "void_plague:void_chestplate"
+  }
+}

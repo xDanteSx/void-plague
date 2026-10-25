@@ -1,0 +1,20 @@
+{
+  "void_ambient": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "ambient.cave"
+      }
+    ],
+    "subtitle": "subtitles.void_plague.void_ambient"
+  },
+  "void_whispers": {
+    "sounds": [
+      {
+        "type": "event",
+        "name": "entity.warden.heartbeat"
+      }
+    ],
+    "subtitle": "subtitles.void_plague.void_whispers"
+  }
+}

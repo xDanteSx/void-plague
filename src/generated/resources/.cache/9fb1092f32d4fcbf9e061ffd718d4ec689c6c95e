@@ -1,0 +1,11 @@
+// 1.21.1	2026-10-24T13:35:49.2824481	Recipes
+80f96ee0f6fa1816822739b6939fe73a16f0b39e data/void_plague/advancement/recipes/building_blocks/calcified_rib.json
+ed642874ad0c15dc45b97e5f4bd4e09c0be97c1c data/void_plague/advancement/recipes/combat/void_chestplate.json
+3c64c14236a78c5286307ac78287cfab3ac2e8e8 data/void_plague/advancement/recipes/combat/void_mask.json
+186545138e783a9e79ce1b46f409cc3374580eaf data/void_plague/advancement/recipes/misc/void_ichor_bucket.json
+285095bde7c2d98a5c1036e893c4c3e7a692fc84 data/void_plague/advancement/recipes/misc/void_purifier.json
+18efcfcf859cdf488930e0faae8ba9fcbd1f4604 data/void_plague/recipe/calcified_rib.json
+a651a4112687eda6e767ee8a9478b5ebec97693a data/void_plague/recipe/void_chestplate.json
+17002ad2fc1462303de2927f2abb889c802b1cff data/void_plague/recipe/void_ichor_bucket.json
+b65e6acc5da3367d4f6ce7686df2c134677d1a2e data/void_plague/recipe/void_mask.json
+77bbc29c17c1417eabfa715032c360932b23c8f2 data/void_plague/recipe/void_purifier.json

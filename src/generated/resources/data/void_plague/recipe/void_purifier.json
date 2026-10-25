@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:amethyst_shard"
+    },
+    "B": {
+      "item": "minecraft:blaze_rod"
+    },
+    "G": {
+      "item": "minecraft:ghast_tear"
+    }
+  },
+  "pattern": [
+    " B ",
+    "GAG",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "void_plague:void_purifier"
+  }
+}

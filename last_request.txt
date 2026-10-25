@@ -1,0 +1,102 @@
+<USER_REQUEST>
+Actúa como desarrollador senior de NeoForge 1.21.1 y especialista en BER / modelado de terror biológico.
+Vamos a rematar de forma definitiva todo el ecosistema de los sacos de incubación ("incubation_sac") implementando:
+1. ANATOMÍA GROTESCA Y EMBRIÓN INTERNO: Añadir la silueta de una larva/feto retorciéndose dentro del líquido amniótico translúcido y pústulas secundarias asimétricas.
+2. VARIANTE DE RACIMO GEMELO (CLUSTER): Dos bulbos entrelazados que cuelgan del mismo anclaje y laten con desfase orgánico.
+3. ESTADO / BLOQUE DE CASCARÓN ROTO ("ruptured_incubation_sac"): Una crisálida desgarrada y vacía que cuelga inerte, desprendiendo vapores tóxicos. Al eclosionar o detonar un saco vivo, este transmuta dinámicamente a cascarón roto en lugar de desaparecer en el aire.
+
+Aplica de forma estricta los siguientes módulos:
+
+================================================================================
+MÓDULO 1: ANATOMÍA GROTESCA Y EMBRIÓN INTERNO (IncubationSacRenderer.java)
+================================================================================
+Conserva la base geométrica actual y el anclaje de raíces que ya funcionan, e introduce los siguientes elementos en PoseStack:
+
+1. EMBRIÓN DEL VACÍO (SILUETA INTERIOR EN 3D):
+   - Aprovechando que la cápsula exterior es translúcida (`RenderType.entityTranslucent`):
+   - Dibuja en el interior del bulbo un núcleo embrionario suspendido:
+     * Dimensiones: Prisma deforme alargado de 3x5x3 píxeles en color negro azabache abisal (#05020A con reflejos tenues #180724).
+     * Animación fetal desfasada:
+       ```java
+       float time = (blockEntity.getLevel().getGameTime() + partialTick);
+       float embryoWiggle = Mth.sin(time * 0.04F) * 0.08F;
+       float embryoRot = (time * 0.5F) % 360.0F;
+       poseStack.pushPose();
+       poseStack.translate(0.0, -0.35 + embryoWiggle, 0.0);
+       poseStack.mulPose(Axis.YP.rotationDegrees(embryoRot));
+       // Renderizar núcleo embrionario interior
+       poseStack.popPose();
+       ```
+     * Resultado: El jugador percibe la silueta de una larva en gestación moviéndose lentamente dentro del fluido amniótico del huevo.
+
+2. PÚSTULAS SECUNDARIAS ASIMÉTRICAS:
+   - En el bulbo exterior, añade 2 pequeñas excrecencias o ampollas esféricas de 2x2 píxeles que brotan en uno de los costados del saco (rompiendo la simetría matemática).
+   - Estas pústulas laten en sincronía con la piel del saco.
+
+3. REGLAS ESTRICTAS DE COLOR Y OVERLAY:
+   - Conserva obligatoriamente:
+     `.setOverlay(OverlayTexture.NO_OVERLAY)`
+     `.setColor(255, 255, 255, 255)`
+   - Cero canales de tinte rojo.
+
+================================================================================
+MÓDULO 2: VARIANTE RACIMO GEMELO (EnumProperty en IncubationSacBlock)
+================================================================================
+1. PROPIEDAD DE VARIANTE:
+   - En `IncubationSacBlock.java`, añade la propiedad:
+     `public static final EnumProperty<SacType> TYPE = EnumProperty.create("type", SacType.class);`
+     Donde `SacType` implementa `StringRepresentable`: `SINGLE` (por defecto) y `CLUSTER`.
+2. COMPORTAMIENTO EN EL RENDERER:
+   - Si `state.getValue(TYPE) == SacType.CLUSTER`:
+     * El anclaje dibuja un pedúnculo bifurcado en forma de "Y".
+     * Del pedúnculo cuelgan dos bulbos: uno principal (100% de tamaño) y uno secundario ligeramente más pequeño (75% de escala) inclinado 18° hacia el lado opuesto.
+     * El latido del bulbo secundario se modula con un desfase senoidal (`time * 0.06F + 1.5F`), de modo que un bulbo se contrae mientras el otro se expande, pareciendo un corazón bicameral.
+3. DETONACIÓN DE RACIMO:
+   - Si un saco de tipo `CLUSTER` eclosiona, genera el doble de `VoidlingEntity` (de 2 a 5 engendros) y un radio de niebla de oscuridad de 6 bloques.
+
+================================================================================
+MÓDULO 3: BLOQUE CASCARÓN ROTO (RupturedIncubationSacBlock.java)
+================================================================================
+Registra el bloque `ruptured_incubation_sac` en `ModBlocks`, `ModItems` y pestaña creativa:
+1. MORFOLOGÍA Y PROPIEDADES:
+   - Soporte idéntico mediante `BlockStateProperties.FACING` (anclable a techo, suelo o pared).
+   - RenderShape / Modelo: Cascarón con el bulbo inferior reventado hacia afuera, dejando una copa de quitina abierta con bordes dentados y colgajos deshilachados de membrana seca.
+   - VoxelShape: Cúpula abierta (x: 2 a 14, y: 5 a 16, z: 2 a 14 para orientación techo).
+2. AMBIENTE NARRATIVO:
+   - En `animateTick`: Emite periódicamente partículas tenues de vapor fétido (`ParticleTypes.SMOKE` o `ParticleTypes.MYCELIUM`) saliendo de la cavidad abierta vacía.
+   - Transmite al jugador la historia ambiental de que el organismo ya emergió y acecha en las sombras del cañón.
+3. TRANSMUTACIÓN AL ECLOSIONAR:
+   - En `IncubationSacBlock.java`, cuando un saco vivo detona (por sprint del jugador, daño o eclosión):
+     * En lugar de llamar a `level.setBlock(pos, Blocks.AIR.defaultBlockState(), 3)`:
+     * Transmuta la posición a:
+       `level.setBlock(pos, ModBlocks.RUPTURED_INCUBATION_SAC.get().defaultBlockState().setValue(FACING, state.getValue(FACING)), 3);`
+     * Deja el cascarón roto humeante como vestigio físico de la eclosión.
+
+================================================================================
+MÓDULO 4: ASSETS Y TEXTURAS (assets/void_plague/)
+================================================================================
+1. Actualiza `incubation_sac.png` (32x32 px):
+   - Mantiene la paleta fría violeta/índigo (Azul >= 1.8 * Rojo).
+   - Añade microestrías longitudinales oscuras que simulan fibras musculares en tensión bajo la piel.
+2. Crea `ruptured_incubation_sac.png` (32x32 px):
+   - Mismo tono de quitina en la base, pero con los bordes de la herida marchitos, médula seca desaturada (#1F1429) y restos oscuros coagulados en el interior de la copa.
+
+================================================================================
+MÓDULO 5: DISTRIBUCIÓN EN WORLDGEN (VoidChasmFeature.java)
+================================================================================
+Al colocar sacos en techos y cornisas:
+- 60% de probabilidad: `incubation_sac` de tipo `SINGLE`.
+- 15% de probabilidad: `incubation_sac` de tipo `CLUSTER` (en bóvedas y techos altos).
+- 25% de probabilidad: `ruptured_incubation_sac` (cascarones ya vacíos distribuidos en nidos antiguos).
+
+================================================================================
+MÓDULO 6: DATAGEN, RECETAS Y COMPILACIÓN
+================================================================================
+- Actualiza DataGen (`ModBlockStateProvider`, `ModItemModelProvider`, `ModBlockLootTableProvider`, `ModLanguageProvider` con nombres en inglés y español).
+- Ejecuta `./gradlew runData`
+- Ejecuta `./gradlew build -x test`
+- Continúa hasta obtener BUILD SUCCESSFUL sin fallos.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-10-24T17:44:43+02:00.
+</ADDITIONAL_METADATA>

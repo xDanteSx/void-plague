@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "void_plague:void_chasm",
+  "step": "top_layer_modification"
+}

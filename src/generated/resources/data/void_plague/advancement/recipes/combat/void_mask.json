@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "void_plague:void_mask"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    },
+    "has_void_essence": {
+      "conditions": {
+        "items": [
+          {
+            "items": "void_plague:void_essence"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_void_essence"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "void_plague:void_mask"
+    ]
+  }
+}

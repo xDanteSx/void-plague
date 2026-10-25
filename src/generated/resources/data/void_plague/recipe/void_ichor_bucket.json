@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "void_plague:void_essence"
+    },
+    {
+      "item": "void_plague:void_essence"
+    },
+    {
+      "item": "void_plague:void_matter"
+    },
+    {
+      "item": "void_plague:void_matter"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "void_plague:void_ichor_bucket"
+  }
+}
